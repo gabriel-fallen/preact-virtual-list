@@ -23,6 +23,9 @@ export default class VirtualList extends Component {
 		if (this.state.height!==this.base.offsetHeight) {
 			this.setState({ height: this.base.offsetHeight });
 		}
+		if (this.state.width!==this.base.offsetWidth) {
+			this.setState({ width: this.base.offsetWidth });
+		}
 	};
 
 	handleScroll = () => {
@@ -43,12 +46,16 @@ export default class VirtualList extends Component {
 		removeEventListener('resize', this.resize);
 	}
 
-	render({ data, rowHeight, renderRow, overscanCount=10, sync, ...props }, { offset=0, height=0 }) {
+	render({ data, rowHeight, itemWidth, renderRow, overscanCount=10, sync, ...props }, { offset=0, height=0, width=0 }) {
 		// first visible row index
 		let start = (offset / rowHeight)|0;
 
 		// actual number of visible rows (without overscan)
 		let visibleRowCount = (height / rowHeight)|0;
+		// number of visible items in a rows
+		let visibleRowLength = (width / itemWidth)|0;
+
+		let totalRows = Math.ceil(data.length / visibleRowLength) + 1;
 
 		// Overscan: render blocks of rows modulo an overscan row count
 		// This dramatically reduces DOM writes during scrolling
@@ -65,7 +72,7 @@ export default class VirtualList extends Component {
 
 		return (
 			<div onScroll={this.handleScroll} {...props}>
-				<div style={`${STYLE_INNER} height:${data.length*rowHeight}px;`}>
+				<div style={`${STYLE_INNER} height:${totalRows*rowHeight}px;`}>
 					<div style={`${STYLE_CONTENT} top:${start*rowHeight}px;`}>
 						{ selection.map(renderRow) }
 					</div>
