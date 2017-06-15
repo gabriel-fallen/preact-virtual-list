@@ -65,7 +65,7 @@ export default class VirtualList extends Component {
 		}
 
 		// last visible + overscan row index
-		let end = start + 1 + visibleRowCount;
+		let end = start + 1 + visibleRowCount*visibleRowLength;
 
 		// data slice currently in viewport plus overscan items
 		let selection = data.slice(start, end);
